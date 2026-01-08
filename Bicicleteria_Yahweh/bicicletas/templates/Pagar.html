@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="icon" href="/media/imagenes_bd/yahweh.png" type="image/x-icon">
+<!--AR. FUNCION QUE PERMITE LIMITAR NÚMEROS O INPUTS DE TIPO number-->
+    <script>
+      function limitarDigitos(event, maxDigits) {
+        const input = event.target;
+        const value = input.value.replace(/\D/g, '');
+        input.value = value.slice(0, maxDigits);
+      }
+    </script>
+
+    <style>
+        /* Estilo por defecto para pantallas grandes (computadores, laptops) */
+        .alerta-login-error {
+            margin-top: 2.5%; /* Margen para pantallas grandes */
+        }
+
+        /* Media Query para dispositivos móviles (ej. ancho de pantalla de 768px o menos) */
+        @media (max-width: 768px) {
+            .alerta-login-error {
+                margin-top: 13%; /* Margen superior más grande para móviles */
+            }
+        }
+
+        /* Opcional: Otra Media Query para pantallas aún más pequeñas si lo necesitas */
+        @media (max-width: 480px) {
+            .alerta-login-error {
+                margin-top: 10%; /* Margen para celulares muy pequeños */
+            }
+        }
+        .user-dropdown-hover {
+          position: relative;
+          display: inline-block;
+          background-color: #e50c57;
+          color: white;
+          padding: 8px 12px;
+          border-radius: 8px;
+          font-weight: bold;
+          cursor: pointer;
+          margin-left:-6%;
+      }
+
+      .user-dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: white;
+          min-width: 160px;
+          right: 0;
+          top: 100%;
+          box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+          z-index: 1000;
+          border-radius: 6px;
+          overflow: hidden;
+      }
+
+      .user-dropdown-content a,
+      .user-dropdown-content button {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+          background: none;
+          border: none;
+          text-align: left;
+          width: 100%;
+          cursor: pointer;
+      }
+
+      .user-dropdown-content a:hover,
+      .user-dropdown-content button:hover {
+          background-color: #f1f1f1;
+      }
+
+      .user-dropdown-hover:hover .user-dropdown-content {
+          display: block;
+      }
+    
+      </style>
+
+  </head>
+<!--#########################################################################-->
+<!--                         BODY                                                -->
+<!--#########################################################################-->
+
+  <body>
+    <!--===================================================================================-->
+    <!--                         BARRA DE NAVEGACIÓN: USUARIO NO INICIÓ SESIÓN             -->
+    <!--===================================================================================-->
+    <nav class="navbar" aria-label="Light offcanvas navbar" style="background-color: #1ddf1b;position:fixed;top:0;width:100%;z-index:100;">
+        <!--Container-->
+        <div class="container-fluid">
+          <!--[ A1.BOTÓN DE CATEGORÍA ]-->
+          <button class="navbar-toggler" style="background-color: #e50c57; color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span><label  style="margin-left: 10px;">Menú</label>
+          </button>
+          <!--[ //A1.BOTÓN DE CATEGORÍA ]-->
+
+          <!--[ A2.DESPLIEGUE DEL BOTÓN DE CATEGORÍA  ]-->
+          <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasWithBothOptionsLabel">
+            <!--Titulo Categorías-->
+            <div class="offcanvas-header" >
+              <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Menú</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <!--Contenido para mostrar las categorías-->
+            <div class="offcanvas-body">
+              <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                  <h5 style="margin-bottom:10px">Categorias</h5>
+                  {% for tipoProductos in tipoProductos %}
+                  <form action="/filtrarcategoria" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_producto_id" value="{{ tipoProductos.id }}"> <!--LE ENVÍA DE MANERA OCULTA EL ID acorde a la Categoría seleccionada-->
+                    <button type="submit" style="margin-bottom: 3%;background-color: #ffffff; text-decoration: none; color:black; border-style:solid; border-color:#ffffff; border-width:1px; border-radius:8%;">{{tipoProductos.descripcion}}</button>
+                  </form>
+                  {% endfor %}
+                </li>
+              </ul> 
+            </div>
+
+          </div>
+          <!--[ //A2.DESPLIEGUE DEL BOTÓN DE CATEGORÍA  ]-->
+
+          <!--[ A3. YAHWEH TÍTULO ]-->
+          <!--url 'mostrarIndex' Permite la Navegabilidad de tal forma que, estando o no el Usuario CONECTADO, no haya errores a la hora del traspaso de datos-->
+          <a class="navbar-brand" href="{% url 'mostrarIndex' %}" style="display: flex; align-items: center; text-decoration: none;margin-left:-8%">
+            <img src="/media/imagenes_bd/yahweh.png" style="width:40px; height:40px;">
+            <h3 style="font-size:20px; color: black;">Bicicletería Yahweh</h3>
+          </a>
+          <!--[ //A3. YAHWEH TÍTULO ]--> 
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <!--[ A4. NAVEGADOR DE BÚSQUEDA ]-->
+          <!--Formulario-->
+          <form class="d-flex mt-3" role="search" method="POST" action="/buscador">
+            {% csrf_token %}
+            <!--BARRA PARA INGRESAR EL PRODUCTO A BUSCAR-->
+            <div class="navbar-center">
+              <form class="d-flex align-items-center justify-content-center w-100" role="search">
+                <div class="input-group" style="width:600px; top:-10px; margin-left:-12%">
+                  <input class="form-control" type="search" name="barraBuscador" placeholder="Buscar"aria-label="Search">
+                  <button class="btn btn-outline-secondary" type="submit" value="Enviar" name="btnBuscador" style="background-color: #e50c57;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-search" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 
+                        3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 
+                        6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                  </button>
+                </div>
+              </form>
+            </div>
+            <!--//BOTÓN QUE AL PRESIONAR BUSCARÁ EL PRODUCTO(LUPITA)-->
+
+          
+            <!--[ A5. "BOTÓN" INICIO SESION]--> <!--Aparecerá solamente si EL USUARIO NO ESTÁ CONECTADO-->
+            {% if usuario|length > 0 %}
+              {% with usuario as usuario %}
+                {% if usuario.0.estadoUsuario_id != 1 %} <!--Si el Estado Usuario EXISTE--> 
+                  <button onclick="window.location.href='/Inicio de Sesion'" type="button" class="btn btn-primary m-1" style="width:20%; background-color:#e50c57;font-weight:bold;border:none">
+                    Iniciar Sesion
+                  </button>
+                {% endif %}
+              {% endwith %}   
+            {% endif%}
+            
+            <!--[ //A5."BOTÓN" INICIO SESION]-->
+
+
+              <!--A5. {CONDICIÓN} EN CASO DE QUE HAYA AL MENOS '1' USUARIO CREADO, MOSTRAR LOS HIPERVÍNCULOS DEL "Historial de Compras" y "Actualizar Usuario"-->
+              {% if usuario|length > 0 %} <!--VERIFICA SI LA LISTA TIENE ALMENTOS 2 ELEMENTOS-->
+                {% with usuario as usuario %} <!--Aquí nos verifica si hay un usuario, a parte que nos permite referirnos de otra manera al usuario-->
+                  {% if usuario.0.estadoUsuario_id == 2 %} <!--Si el Usuario es ""Cliente"" y su Estado_Usuario está "DESCONECTADO"-->
+                  <a href="/Inicio de Sesion" style="color:black;"> <!--MOSTRAR EL ÍCONO del CARRITO DE COMPRAS CON HREF A INICIO SESION -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16" style="margin-left:10px;">
+                      <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2H5V5H3.14zM6 5v2h2V5H6zm3 0v2h2V5H9zm3 0v2h1.36l.5-2H12zm1.11 3H12v2h.61l.5-2zM11 8H9v2h2V8zM8 8H6v2h2V8zM5 8H3.89l.5 2H5V8zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                    </svg>
+                  </a>
+
+                  {% else %}<!--En caso Contrario--> 
+                  
+                  <div class="user-dropdown-hover">
+                    <span class="user-name">
+                      Hola, {{ usuario.0.nombre }} ▼
+                    </span>
+                    <div class="user-dropdown-content">
+                      <a href="/perfil_usuario">Mi cuenta</a>
+                      <a href="/Historial de Compras">Mis compras</a>
+                      <a href="/seguimiento_cliente">Seguimiento</a>
+                      <form method="post" action="/cerrar Sesion">
+                        {% csrf_token %}
+                        <button type="submit">Cerrar sesión</button>
+                      </form>
+                    </div>
+                  </div>
+
+                  <a href="/Carrito de Compras" style="color:black;"><!--Mostrar el Carrito de Compras con HREF al Carrito de Compras-->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16" style="margin-left:10px;">
+                      <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2H5V5H3.14zM6 5v2h2V5H6zm3 0v2h2V5H9zm3 0v2h1.36l.5-2H12zm1.11 3H12v2h.61l.5-2zM11 8H9v2h2V8zM8 8H6v2h2V8zM5 8H3.89l.5 2H5V8zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                    </svg>
+                  </a>
+
+                  {% endif %}
+                {% endwith %}
+            {% endif %}    
+            </form>
+          </div>
+          <!--//Formulario-->
+        </div>
+        <!--//container-->
+    </nav>
+<!--#################################################################-->
+<!--                FORMULARIO PARA VALIDAR LA COMPRA                -->
+<!--#################################################################-->
+    <center><h1 style="margin-top: 6%;">Confirmar Compra</h1></center> 
+    <div class="container border border-success-subtle" style="margin-top: 3%; background-color: white;">
+        <h5>Resumen del la Compra</h5>
+            <p> Producto(s): {{ nombreProducto }}</p>
+            <p> Cantidad: {{ cantidad }}
+            <p> Precio Total: {{ precio }}</p>
+            {% comment %} <p> ID: {{ producto_id }} </p>
+            <p> Mostrar : {{ usuario.0.id }}</p> {% endcomment %}
+            
+        <form style="padding: 10px;" action="/pagar" method="post" id="formulario_pagar">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="tipo_compra" class="form-label">Tipo de Despacho:</label>
+            <select class="form-select" id="tipo_compra" name="tipo_compra" required>
+                <option value="">Seleccionar tipo de despacho</option>
+                <option value="presencial">Presencial</option>
+                <option value="online">A Domicilio</option>
+            </select>
+          </div>
+
+          <div class="mb-3" id="direccion_envio_container" style="display: none;">
+              <label for="direccion_envio" class="form-label">Dirección de Envío:</label>
+              <textarea class="form-control" id="direccion_envio" name="direccion_envio" rows="3" placeholder="Ingrese su dirección de envío"></textarea>
+              
+              <div class="row">
+                <div class="col-6 mb-3" style="margin-top: 1%">
+                    <label for="selregion" class="form-label">Seleccione su Región</label>
+                    <select class="form-select" id="selregion" name="selregion" required>
+                        <option value="">REGION</option>
+                        {% for r in region %}
+                        <option value="{{ r.id }}">{{r.nombre}}</option> {# <--- CAMBIO AQUÍ: r.id en lugar de r.nombre #}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 mb-3" style="margin-top: 1%">
+                    <label for="selcomuna" class="form-label">Seleccione su Comuna:</label>
+                    <select class="form-select" id="selcomuna" name="selcomuna" required>
+                        <option value="">COMUNA</option>
+                    </select>
+                </div>
+              </div>  
+          </div>
+            <center>
+              <input type="hidden" name="producto_id" value="{{ producto_id }}">
+              <input type="hidden" name="cantidad" value="{{ cantidad }}">
+              <input type="hidden" name="precio" value="{{ precio }}">
+              <button type="submit" class="btn btn-primary" onclick="return funcionBotonPagar()">PAGAR</button>
+            </center>
+          
+        </form>
+        
+
+    
+    </div>
+    
+
+    
+<!--#################################################################-->
+<!--       SCRIPT QUE PERMITE HABILITAR/DESABILITAR LA DIRECCIÓN      -->
+<!--#################################################################-->  
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoCompraSelect = document.getElementById('tipo_compra');
+            const direccionEnvioContainer = document.getElementById('direccion_envio_container');
+            const direccionEnvioTextarea = document.getElementById('direccion_envio');
+            const selRegion = document.getElementById('selregion');
+            const selComuna = document.getElementById('selcomuna');
+
+            // --- Función para activar/desactivar campos de dirección y gestionar 'required' ---
+            function toggleDireccionFields(isVisible) {
+                if (isVisible) {
+                    direccionEnvioContainer.style.display = 'block';
+                    direccionEnvioTextarea.setAttribute('required', 'true');
+                    selRegion.setAttribute('required', 'true');
+                    selComuna.setAttribute('required', 'true');
+                } else {
+                    direccionEnvioContainer.style.display = 'none';
+                    direccionEnvioTextarea.removeAttribute('required');
+                    selRegion.removeAttribute('required');
+                    selComuna.removeAttribute('required');
+                    
+                    // Opcional: Limpiar y resetear valores cuando se oculta
+                    direccionEnvioTextarea.value = '';
+                    selRegion.value = ''; // Resetear la región seleccionada
+                    selComuna.innerHTML = '<option value="">COMUNA</option>'; // Limpiar comunas
+                }
+            }
+
+            // --- Función para cargar comunas vía AJAX ---
+            function cargarComunasPorRegion(regionId) {
+                selComuna.innerHTML = '<option value="">Cargando Comunas...</option>'; // Mensaje de carga
+
+               
+                // O directamente la URL como cadena si no te complicas con url reversing en JS
+                const url = `/get_comunas_por_region/${regionId}/`; 
+                // const url = `{% url 'get_comunas_por_region' 0 %}`.replace('0/', `${regionId}/`); // Reemplaza el 0 por el ID real
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error de red o servidor al cargar comunas.');
+                        }
+                        return response.json();
+                    })
+                    .then(comunas => {
+                        selComuna.innerHTML = '<option value="">COMUNA</option>'; // Resetear después de cargar
+                        if (comunas.length === 0) {
+                            selComuna.innerHTML = '<option value="">No hay comunas para esta región</option>';
+                        } else {
+                            comunas.forEach(comuna => {
+                                const option = document.createElement('option');
+                                option.value = comuna.id; // ¡Importante! Enviar el ID de la comuna al backend
+                                option.textContent = comuna.nombre;
+                                selComuna.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al obtener comunas:', error);
+                        selComuna.innerHTML = '<option value="">Error al cargar comunas</option>';
+                    });
+            }
+
+            // --- Manejador para el cambio en el Tipo de Compra ---
+            tipoCompraSelect.addEventListener('change', function() {
+                if (this.value === 'online') {
+                    toggleDireccionFields(true);
+                    // Si al mostrar, ya hay una región seleccionada (ej: al volver del navegador),
+                    // cargamos las comunas para esa región.
+                    if (selRegion.value) { 
+                        cargarComunasPorRegion(selRegion.value);
+                    }
+                } else {
+                    toggleDireccionFields(false);
+                }
+            });
+
+            // --- Manejador para el cambio en la Selección de Región ---
+            selRegion.addEventListener('change', function() {
+                const regionId = this.value;
+                if (regionId) {
+                    cargarComunasPorRegion(regionId);
+                } else {
+                    // Si se selecciona la opción "REGION" vacía, limpiar comunas
+                    selComuna.innerHTML = '<option value="">COMUNA</option>';
+                }
+            });
+
+            // --- Lógica de Inicialización al cargar la página ---
+            // Esto asegura que el estado inicial del formulario sea correcto
+            // si el usuario regresa a la página o si hay un valor pre-seleccionado
+            if (tipoCompraSelect.value === 'online') {
+                toggleDireccionFields(true);
+                // Si al inicio hay una región seleccionada, cargar sus comunas
+                if (selRegion.value) {
+                    cargarComunasPorRegion(selRegion.value);
+                }
+            } else {
+                toggleDireccionFields(false);
+            }
+        });
+      </script>
+  <!--#################################################################-->
+  <!--       SCRIPT QUE PERMITE AGENDAR TRAS COMPRAR EL PRODUCTO      -->
+  <!--#################################################################-->  
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoCompraSelect = document.getElementById('tipo_compra');
+            const direccionEnvioContainer = document.getElementById('direccion_envio_container');
+            const direccionEnvioTextarea = document.getElementById('direccion_envio');
+            const selRegion = document.getElementById('selregion');
+            const selComuna = document.getElementById('selcomuna');
+
+            // --- Función para activar/desactivar campos de dirección ---
+            function toggleDireccionFields(isVisible) {
+                if (isVisible) {
+                    direccionEnvioContainer.style.display = 'block';
+                    direccionEnvioTextarea.setAttribute('required', 'true');
+                    selRegion.setAttribute('required', 'true');
+                    selComuna.setAttribute('required', 'true');
+                } else {
+                    direccionEnvioContainer.style.display = 'none';
+                    direccionEnvioTextarea.removeAttribute('required');
+                    selRegion.removeAttribute('required');
+                    selComuna.removeAttribute('required');
+                    
+                    // Opcional: Limpiar y resetear valores cuando se oculta
+                    direccionEnvioTextarea.value = '';
+                    selRegion.value = ''; 
+                    selComuna.innerHTML = '<option value="">COMUNA</option>'; // Limpiar comunas
+                }
+            }
+
+            // --- Manejador de eventos para el select de Tipo de Compra ---
+            tipoCompraSelect.addEventListener('change', function() {
+                if (this.value === 'online') {
+                    toggleDireccionFields(true);
+                    // Si ya estaba en 'online' y cambian de región, esto no se disparará
+                    // así que nos aseguramos de cargar las comunas si ya había una región seleccionada
+                    if (selRegion.value) {
+                        cargarComunasPorRegion(selRegion.value);
+                    }
+                } else {
+                    toggleDireccionFields(false);
+                }
+            });
+
+            // --- Función para cargar comunas vía AJAX (reutilizable) ---
+            function cargarComunasPorRegion(regionId) {
+                selComuna.innerHTML = '<option value="">Cargando Comunas...</option>'; // Mensaje de carga
+
+                // Asumiendo que la URL de Django es /get_comunas_por_region/<int:region_id>/
+                const url = `/get_comunas_por_region/${regionId}/`; 
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error de red o servidor al cargar comunas.');
+                        }
+                        return response.json();
+                    })
+                    .then(comunas => {
+                        selComuna.innerHTML = '<option value="">COMUNA</option>'; // Resetear después de cargar
+                        if (comunas.length === 0) {
+                            selComuna.innerHTML = '<option value="">No hay comunas para esta región</option>';
+                        } else {
+                            comunas.forEach(comuna => {
+                                const option = document.createElement('option');
+                                option.value = comuna.id; 
+                                option.textContent = comuna.nombre;
+                                selComuna.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al obtener comunas:', error);
+                        selComuna.innerHTML = '<option value="">Error al cargar comunas</option>';
+                    });
+            }
+
+            // --- Manejador de eventos para el select de Región (solo se activa si el contenedor es visible) ---
+            selRegion.addEventListener('change', function() {
+                const regionId = this.value;
+                if (regionId) {
+                    cargarComunasPorRegion(regionId);
+                } else {
+                    selComuna.innerHTML = '<option value="">COMUNA</option>'; // Si deselecciona la región
+                }
+            });
+
+            // --- Inicialización al cargar la página ---
+            // Esto es importante si el formulario se renderiza después de una validación
+            // o si quieres que el estado inicial se refleje correctamente.
+            if (tipoCompraSelect.value === 'online') {
+                toggleDireccionFields(true);
+                if (selRegion.value) { // Si ya hay una región preseleccionada al cargar
+                    cargarComunasPorRegion(selRegion.value);
+                }
+            } else {
+                toggleDireccionFields(false);
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  
+  
+  
+  </body>
+
+
+</html>

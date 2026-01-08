@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="es">
+<!--========================================================================================-->
+<!--                                    HEAD                                                -->
+<!--========================================================================================-->    
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yahweh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js'></script>    
+    <link rel="icon" href="/media/imagenes_bd/yahweh.png" type="image/x-icon">
+
+    <style>
+    /* Estilo por defecto para pantallas grandes (computadores, laptops) */
+        .alerta-login-error {
+            margin-top: 4%; /* Margen para pantallas grandes */
+        }
+
+        /* Media Query para dispositivos móviles (ej. ancho de pantalla de 768px o menos) */
+        @media (max-width: 768px) {
+            .alerta-login-error {
+                margin-top: 13%; /* Margen superior más grande para móviles */
+            }
+        }
+
+        /* Opcional: Otra Media Query para pantallas aún más pequeñas si lo necesitas */
+        @media (max-width: 480px) {
+            .alerta-login-error {
+                margin-top: 10%; /* Margen para celulares muy pequeños */
+            }
+        }
+
+        .user-dropdown-hover {
+          position: relative;
+          display: inline-block;
+          background-color: #e50c57;
+          color: white;
+          padding: 8px 12px;
+          border-radius: 8px;
+          font-weight: bold;
+          cursor: pointer;
+          margin-left:-6%;
+      }
+
+      .user-dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: white;
+          min-width: 160px;
+          right: 0;
+          top: 100%;
+          box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+          z-index: 1000;
+          border-radius: 6px;
+          overflow: hidden;
+      }
+
+      .user-dropdown-content a,
+      .user-dropdown-content button {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+          background: none;
+          border: none;
+          text-align: left;
+          width: 100%;
+          cursor: pointer;
+      }
+
+      .user-dropdown-content a:hover,
+      .user-dropdown-content button:hover {
+          background-color: #f1f1f1;
+      }
+
+      .user-dropdown-hover:hover .user-dropdown-content {
+          display: block;
+      }
+      </style>
+
+  
+  </head>
+
+<!--========================================================================================-->
+<!--                                    BODY                                                -->
+<!--========================================================================================-->    
+
+  <body>
+    <!--===================================================================================-->
+    <!--                         BARRA DE NAVEGACIÓN: USUARIO NO INICIÓ SESIÓN             -->
+    <!--===================================================================================-->
+    <nav class="navbar" aria-label="Light offcanvas navbar" style="background-color: #1ddf1b;position:fixed;top:0;width:100%;z-index:100;">
+        <!--Container-->
+        <div class="container-fluid">
+          <!--[ A1.BOTÓN DE CATEGORÍA ]-->
+          <button class="navbar-toggler" style="background-color: #e50c57; color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span><label  style="margin-left: 10px;">Menú</label>
+          </button>
+          <!--[ //A1.BOTÓN DE CATEGORÍA ]-->
+
+          <!--[ A2.DESPLIEGUE DEL BOTÓN DE CATEGORÍA  ]-->
+          <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasWithBothOptionsLabel">
+            <!--Titulo Categorías-->
+            <div class="offcanvas-header" >
+              <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Menú</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <!--Contenido para mostrar las categorías-->
+            <div class="offcanvas-body">
+              <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                  <h5 style="margin-bottom:10px">Categorias</h5>
+                  {% for tipoProductos in tipoProductos %}
+                  <form action="/filtrarcategoria" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_producto_id" value="{{ tipoProductos.id }}"> <!--LE ENVÍA DE MANERA OCULTA EL ID acorde a la Categoría seleccionada-->
+                    <button type="submit" style="margin-bottom: 3%;background-color: #ffffff; text-decoration: none; color:black; border-style:solid; border-color:#ffffff; border-width:1px; border-radius:8%;">{{tipoProductos.descripcion}}</button>
+                  </form>
+                  {% endfor %}
+                </li>
+              </ul> 
+            </div>
+
+          </div>
+          <!--[ //A2.DESPLIEGUE DEL BOTÓN DE CATEGORÍA  ]-->
+
+          <!--[ A3. YAHWEH TÍTULO ]-->
+          <!--url 'mostrarIndex' Permite la Navegabilidad de tal forma que, estando o no el Usuario CONECTADO, no haya errores a la hora del traspaso de datos-->
+          <a class="navbar-brand" href="{% url 'mostrarIndex' %}" style="display: flex; align-items: center; text-decoration: none;margin-left:-8%">
+            <img src="/media/imagenes_bd/yahweh.png" style="width:40px; height:40px;">
+            <h3 style="font-size:20px; color: black;">Bicicletería Yahweh</h3>
+          </a>
+          <!--[ //A3. YAHWEH TÍTULO ]--> 
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <!--[ A4. NAVEGADOR DE BÚSQUEDA ]-->
+          <!--Formulario-->
+          <form class="d-flex mt-3" role="search" method="POST" action="/buscador">
+            {% csrf_token %}
+            <!--BARRA PARA INGRESAR EL PRODUCTO A BUSCAR-->
+            <div class="navbar-center">
+              <form class="d-flex align-items-center justify-content-center w-100" role="search">
+                <div class="input-group" style="width:600px; top:-10px; margin-left:-12%">
+                  <input class="form-control" type="search" name="barraBuscador" placeholder="Buscar"aria-label="Search">
+                  <button class="btn btn-outline-secondary" type="submit" value="Enviar" name="btnBuscador" style="background-color: #e50c57;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-search" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 
+                        3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 
+                        6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                  </button>
+                </div>
+              </form>
+            </div>
+            <!--//BOTÓN QUE AL PRESIONAR BUSCARÁ EL PRODUCTO(LUPITA)-->
+
+          
+            <!--[ A5. "BOTÓN" INICIO SESION]--> <!--Aparecerá solamente si EL USUARIO NO ESTÁ CONECTADO-->
+                {% if usuario.0.estadoUsuario_id != 1 %} <!--Si el Estado Usuario EXISTE--> 
+                  <button onclick="window.location.href='/Inicio de Sesion'" type="button" class="btn btn-primary m-1" style="width:20%; background-color:#e50c57;font-weight:bold;border:none">
+                    Iniciar Sesion
+                  </button>
+                {% endif %}
+            
+            <!--[ //A5."BOTÓN" INICIO SESION]-->
+
+
+              <!--A5. {CONDICIÓN} EN CASO DE QUE HAYA AL MENOS '1' USUARIO CREADO, MOSTRAR LOS HIPERVÍNCULOS DEL "Historial de Compras" y "Actualizar Usuario"-->
+<!--Aquí nos verifica si hay un usuario, a parte que nos permite referirnos de otra manera al usuario-->
+                  {% if usuario.0.estadoUsuario_id != 1 %} <!--Si el Usuario es ""Cliente"" y su Estado_Usuario está "DESCONECTADO"-->
+                  <a href="/Inicio de Sesion" style="color:black;"> <!--MOSTRAR EL ÍCONO del CARRITO DE COMPRAS CON HREF A INICIO SESION -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16" style="margin-left:10px;">
+                      <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2H5V5H3.14zM6 5v2h2V5H6zm3 0v2h2V5H9zm3 0v2h1.36l.5-2H12zm1.11 3H12v2h.61l.5-2zM11 8H9v2h2V8zM8 8H6v2h2V8zM5 8H3.89l.5 2H5V8zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                    </svg>
+                  </a>
+
+                  {% else %}<!--En caso Contrario--> 
+                  
+                  <div class="user-dropdown-hover">
+                    <span class="user-name">
+                      Hola, {{ usuario.0.nombre }} ▼
+                    </span>
+                    <div class="user-dropdown-content">
+                      <a href="/perfil_usuario">Mi cuenta</a>
+                      <a href="/Historial de Compras">Mis compras</a>
+                      <a href="/seguimiento_cliente">Seguimiento</a>
+                      <form method="post" action="/cerrar Sesion">
+                        {% csrf_token %}
+                        <button type="submit">Cerrar sesión</button>
+                      </form>
+                    </div>
+                  </div>
+
+                  <a href="/Carrito de Compras" style="color:black;"><!--Mostrar el Carrito de Compras con HREF al Carrito de Compras-->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16" style="margin-left:10px;">
+                      <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2H5V5H3.14zM6 5v2h2V5H6zm3 0v2h2V5H9zm3 0v2h1.36l.5-2H12zm1.11 3H12v2h.61l.5-2zM11 8H9v2h2V8zM8 8H6v2h2V8zM5 8H3.89l.5 2H5V8zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+                    </svg>
+                  </a>
+
+                  {% endif %}
+            </form>
+          </div>
+          <!--//Formulario-->
+        </div>
+        <!--//container-->
+    </nav>
+<!--===================================================================================-->
+<!--                            AGENDAMIENTOS                                           -->
+<!--===================================================================================-->
+
+    <div class="container" style="border:2px solid #1ddf1b;padding:20px;margin-top:7%;margin-bottom:2%;">
+        <h2 class="text-center">Agendar Reparación</h2>
+
+        <form action="/procesar_agendamiento" method="post">
+            {% csrf_token %}
+
+            <h2>Selecciona una fecha</h2>
+            <div id="botones-fechas" class="mb-3">
+            {% for fecha in fechas_disponibles %}
+                <button type="button" class="btn btn-primary m-1" onclick="mostrarHoras('{{ fecha }}')" style="width:20%; background-color:#e50c57;font-weight:bold;border:none">
+                {{ fecha }}
+                </button>
+            {% endfor %}
+            </div>
+
+            <h2>Horas disponibles</h2>
+            <div id="horasContainer" class="mb-3"></div>
+
+            <!-- Inputs ocultos para enviar los valores seleccionados -->
+            <input type="hidden" id="fechaSeleccionada" name="fecha_agendamiento" required>
+            <input type="hidden" id="horaSeleccionada" name="hora_agendamiento" required>
+
+            <div class="row">
+            <div class="col-12 mb-3">
+                <label for="descripcion_consulta">Descripción de la Consulta:</label>
+                <textarea id="descripcion_consulta" name="descripcion_consulta" style="width:100%; height:100%" placeholder="Detalle el problema de su bicicleta" required></textarea>
+            </div>
+            </div>
+
+            <div class="row">
+            <div class="col-12 mb-3">
+                <center><button type="submit" class="btn btn-primary" style="width:20%; background-color:#e50c57;font-weight:bold;border:none;margin-top:2%">Agendar</button></center>
+            </div>
+            </div>
+        </form>
+        </div>
+
+        <script>
+        // Parsear el JSON de horas por fecha pasado desde la vista
+        const horasPorFecha = JSON.parse('{{ horas_por_fecha|escapejs }}');
+
+        function mostrarHoras(fechaSeleccionada) {
+            // Asigna fecha al input oculto
+            document.getElementById("fechaSeleccionada").value = fechaSeleccionada;
+
+            const contenedor = document.getElementById("horasContainer");
+            const horas = horasPorFecha[fechaSeleccionada];
+
+            if (!horas || horas.length === 0) {
+            contenedor.innerHTML = "<p>No hay horas disponibles para esta fecha.</p>";
+            return;
+            }
+
+            let html = '<div class="btn-group" role="group">';
+            horas.forEach(h => {
+            html += `<button type="button" class="btn btn-primary m-1" onclick="seleccionarHora('${h}')" style="width:20%; background-color:#1ddf1b;font-weight:bold;border:none;margin-top:2%">${h}</button>`;
+            });
+            html += '</div>';
+            contenedor.innerHTML = html;
+        }
+
+        function seleccionarHora(hora) {
+            document.getElementById("horaSeleccionada").value = hora;
+        }
+        </script>   
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  
+  
+  
+  </body>
+
+  
+
+</html>

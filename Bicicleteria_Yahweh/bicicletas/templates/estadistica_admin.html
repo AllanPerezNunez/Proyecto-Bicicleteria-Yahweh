@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yahweh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+<body>
+
+   {% csrf_token %}
+
+<!--=========================================NAVBAR==================================================-->
+ <nav class="navbar" aria-label="Light offcanvas navbar" style="background-color: #1ddf1b;position:fixed;top:0;width:100%;z-index:100;">
+            <div class="container-fluid">
+              <button class="navbar-toggler" style="background-color: #e50c57; color: white;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span><label  style="margin-left: 10px;">Acciones</label>
+              </button>
+              <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasWithBothOptionsLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Acciones</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="/estadistica">Inicio</a>
+                      <a class="nav-link active" aria-current="page" href="/registrarproducto">Agregar Productos</a>
+                      <a class="nav-link active" aria-current="page" href="/agregarhoras">Agregar Horas de Agendamiento</a>
+                      <a class="nav-link active" aria-current="page" href="/agregarcategorias">Agregar Categorias</a>
+                      <a class="nav-link active" aria-current="page" href="/listarproductos">Listar Productos</a>
+                      <a class="nav-link active" aria-current="page" href="/listarusuarios">Listar Usuarios</a>
+                      <a class="nav-link active" aria-current="page" href="/listarcategorias">Listar Categorias</a>
+                      <a class="nav-link active" aria-current="page" href="/lista_agendas">Agendamientos</a>
+                      <a class="nav-link active" aria-current="page" href="/seguimiento_admin">Seguimiento Compras online</a>
+                      <a class="nav-link active" aria-current="page" href="/presencial_admin">Despacho Presencial</a>
+                      <a class="nav-link active" aria-current="page" href="/cerrar Sesion">Cerrar Sesion</a>  
+                    </li>
+                  </ul>
+                  
+                </div>
+              </div>
+              <a class="navbar-brand" href="/" style="display: flex; align-items: center; text-decoration: none;position:relative;left:-70%;"><!--HREF DEBE LLEVAR AL DASHBOARD-->
+                <img src="/media/imagenes_bd/yahweh.png" style="width:40px; height:40px;">
+                <h3 style="font-size:20px; color: black;">Bicicletería Yahweh</h3>
+              </a>
+            </div>
+  </nav>
+<!--=================================FIN NAVBAR===========================================================-->
+
+  <div class="container" style="border:2px solid #1ddf1b;padding:20px;margin-top:7%;">
+          <br/>
+
+          <h1 class="text-center">Dashboard</h1>
+
+  </div>
+
+  
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
